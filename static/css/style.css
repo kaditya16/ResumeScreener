@@ -1,53 +1,133 @@
-/* Custom styles for Resume Shortlisting Application */
+/* Custom styles for Resume Shortlisting Application - Light Theme with Blue Accents */
+
+:root {
+    --main-blue: #0d6efd;
+    --light-blue: #e7f1ff;
+    --dark-blue: #0a58ca;
+    --success-green: #198754;
+    --danger-red: #dc3545;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: var(--main-blue) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: white !important;
+}
+
+.navbar-nav .nav-link.active {
+    color: white !important;
+    font-weight: 600;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
 /* Custom card styles */
 .card {
     transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
+    border-bottom: none;
 }
 
 /* Custom badge styles */
 .badge.bg-success {
-    background-color: var(--bs-success) !important;
+    background-color: var(--success-green) !important;
 }
 
 .badge.bg-danger {
-    background-color: var(--bs-danger) !important;
+    background-color: var(--danger-red) !important;
+}
+
+.badge.bg-primary {
+    background-color: var(--main-blue) !important;
 }
 
 /* Improve table readability */
 .table th {
     font-weight: 600;
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
 }
 
 .table-hover tbody tr:hover {
-    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    background-color: rgba(13, 110, 253, 0.05);
 }
 
 /* Custom form styles */
+.form-control, .form-select {
+    border: 1px solid #dce7f1;
+}
+
 .form-control:focus, .form-select:focus {
-    border-color: var(--bs-primary);
-    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+    border-color: var(--main-blue);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.input-group-text {
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
+    border: 1px solid #dce7f1;
 }
 
 /* Custom button styles */
 .btn {
     font-weight: 500;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background-color: var(--main-blue);
+    border-color: var(--main-blue);
+}
+
+.btn-primary:hover {
+    background-color: var(--dark-blue);
+    border-color: var(--dark-blue);
+}
+
+.btn-outline-primary {
+    color: var(--main-blue);
+    border-color: var(--main-blue);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--main-blue);
+    border-color: var(--main-blue);
 }
 
 /* Footer styling */
 footer {
     margin-top: 3rem;
     padding: 1.5rem 0;
+    background-color: var(--light-blue) !important;
+    color: var(--dark-blue);
 }
 
 /* Improve accessibility */
 a:focus, button:focus {
-    outline: 2px solid var(--bs-primary);
+    outline: 2px solid var(--main-blue);
     outline-offset: 2px;
 }
 
@@ -58,20 +138,20 @@ a:focus, button:focus {
 .dataTables_wrapper .dataTables_processing, 
 .dataTables_wrapper .dataTables_paginate {
     margin-bottom: 1rem;
-    color: var(--bs-body-color) !important;
+    color: #212529 !important;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
-    color: var(--bs-body-color) !important;
+    color: #212529 !important;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-    background: var(--bs-primary) !important;
+    background: var(--main-blue) !important;
     color: white !important;
-    border: 1px solid var(--bs-primary) !important;
+    border: 1px solid var(--main-blue) !important;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    background: var(--bs-primary-rgb) !important;
-    color: white !important;
+    background: var(--light-blue) !important;
+    color: var(--dark-blue) !important;
 }
