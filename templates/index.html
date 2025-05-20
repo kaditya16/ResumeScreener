@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Resume Shortlisting Application{% endblock %}
+
+{% block content %}
+<div class="row py-5">
+    <div class="col-md-6">
+        <h1 class="display-4 mb-4">Resume Shortlisting Application</h1>
+        <p class="lead">Find the perfect job match for your skills and experience.</p>
+        <p>Browse available job descriptions and submit your application for consideration. Our advanced matching algorithms will help determine if your profile fits the requirements.</p>
+        <div class="mt-4">
+            <a href="{{ url_for('apply') }}" class="btn btn-primary me-2">
+                <i class="bi bi-file-earmark-plus me-1"></i> Submit Application
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6 text-center">
+        <img src="https://pixabay.com/get/g31ff60ebcecaa96a7366429f449adf8cc3d4787641d6c52f31f1bc60c465a89b336f6e9365cc9b047e0b1dbe8727071bf443c0683defff8ccb6f31936901c2d0_1280.jpg" alt="Resume Review" class="img-fluid rounded shadow" style="max-height: 300px;">
+    </div>
+</div>
+
+<hr class="my-5">
+
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="mb-4">Available Job Descriptions</h2>
+        
+        {% if job_descriptions %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for jd in job_descriptions %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">{{ jd.jd_id }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">{{ jd.description|truncate(150) }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a href="{{ url_for('apply') }}?jd_id={{ jd.jd_id }}" class="btn btn-outline-primary btn-sm">Apply Now</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">No job descriptions available at the moment.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

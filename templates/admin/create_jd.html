@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Job Description - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Create New Job Description</h2>
+    <a href="{{ url_for('admin_view_jds') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to JDs
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ url_for('admin_create_jd') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="jd_id" class="form-label">Job ID</label>
+                        <input type="text" class="form-control" id="jd_id" name="jd_id" placeholder="e.g., BACKEND-DEV-001" required>
+                        <div class="form-text">Enter a unique identifier for this job description</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Job Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="15" required></textarea>
+                        <div class="form-text">Enter the detailed job description with requirements and responsibilities</div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i> Create Job Description
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Writing Tips</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Include specific skills required</li>
+                    <li class="list-group-item">Mention required years of experience</li>
+                    <li class="list-group-item">List educational qualifications</li>
+                    <li class="list-group-item">Describe key responsibilities</li>
+                    <li class="list-group-item">Add information about required tech stack</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Matching Algorithm</h5>
+            </div>
+            <div class="card-body">
+                <p>The system will use the text in this job description to match against candidate resumes. Be specific about requirements to improve matching accuracy.</p>
+                <p>Keywords and specific technical terms will have higher weight in the matching algorithm.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

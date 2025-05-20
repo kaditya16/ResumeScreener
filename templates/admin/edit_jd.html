@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Job Description - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Edit Job Description</h2>
+    <a href="{{ url_for('admin_view_jds') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to JDs
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ url_for('admin_edit_jd', jd_id=job_description.jd_id) }}" method="POST">
+                    <div class="mb-3">
+                        <label for="jd_id" class="form-label">Job ID</label>
+                        <input type="text" class="form-control" id="jd_id" value="{{ job_description.jd_id }}" readonly>
+                        <div class="form-text">Job ID cannot be changed</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Job Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="15" required>{{ job_description.description }}</textarea>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-1"></i> Update Job Description
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-1"></i> Important Note</h5>
+            </div>
+            <div class="card-body">
+                <p>Updating this job description may affect how new applications are scored against it. Existing application scores will not be recalculated.</p>
+                <p>Make sure your changes maintain the core requirements of the position.</p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">Applications</h5>
+            </div>
+            <div class="card-body">
+                <p>This job description has <strong>{{ job_description.applications|length }}</strong> applications.</p>
+                <a href="{{ url_for('admin_reports', jd_id=job_description.jd_id) }}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-list-ul me-1"></i> View Applications
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
