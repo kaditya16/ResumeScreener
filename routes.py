@@ -148,16 +148,17 @@ def apply():
             
             # Compute matching score
             score = compute_matching_score(resume_text, jd_text)
+            # Convert NumPy float to Python float to avoid database issues
+            score = float(score)
             shortlisted = score >= 60  # Threshold is 60%
             
             # Create application record
-            application = Application(
-                name=name,
-                resume_path=filename,
-                jd_id=jd_id,
-                matching_score=score,
-                shortlisted=shortlisted
-            )
+            application = Application()
+            application.name = name
+            application.resume_path = filename
+            application.jd_id = jd_id
+            application.matching_score = score
+            application.shortlisted = shortlisted
             
             db.session.add(application)
             db.session.commit()
