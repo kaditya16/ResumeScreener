@@ -32,6 +32,10 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
+        if not username or not password:
+            flash('Username and password are required', 'danger')
+            return render_template('login.html')
+            
         admin = Admin.query.filter_by(username=username).first()
         
         if admin and check_password_hash(admin.password_hash, password):
@@ -42,6 +46,51 @@ def login():
             flash('Invalid username or password', 'danger')
     
     return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('admin_reports'))
+    
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        # Form validation
+        if not username or not email or not password or not confirm_password:
+            flash('All fields are required', 'danger')
+            return render_template('register.html')
+        
+        if password != confirm_password:
+            flash('Passwords do not match', 'danger')
+            return render_template('register.html')
+        
+        # Check if username or email already exists
+        if Admin.query.filter_by(username=username).first():
+            flash('Username already exists', 'danger')
+            return render_template('register.html')
+        
+        if Admin.query.filter_by(email=email).first():
+            flash('Email already exists', 'danger')
+            return render_template('register.html')
+        
+        # Create new admin account
+        from werkzeug.security import generate_password_hash
+        # Create instance and set attributes
+        new_admin = Admin()
+        new_admin.username = username
+        new_admin.email = email
+        new_admin.password_hash = generate_password_hash(password)
+        
+        db.session.add(new_admin)
+        db.session.commit()
+        
+        flash('Your admin account has been created! You can now log in.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('register.html')
 
 @app.route('/logout')
 @login_required
