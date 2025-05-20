@@ -1,0 +1,150 @@
+Pasted-Prompt-for-Resume-Shortlisting-Application-FastAPI-PostgreSQL-HTML-Build-a-Resume-Shortlisting-1747235669495.txt
+Prompt for Resume Shortlisting Application (FastAPI + PostgreSQL + HTML)
+Build a Resume Shortlisting Web Application with the following tech stack:
+
+Backend: Python using FastAPI
+
+Database: PostgreSQL
+
+Frontend: HTML (basic interface for forms and listings)
+
+👤 Admin Module
+1. Vacancies Management
+Implement CRUD endpoints and UI for managing Job Descriptions (JDs).
+
+PostgreSQL Table: job_descriptions
+
+sql
+Copy
+Edit
+CREATE TABLE job_descriptions (
+  jd_id TEXT PRIMARY KEY,
+  description TEXT NOT NULL
+);
+Features:
+
+Create new JD (Form with jd_id, description)
+
+View list of all JDs
+
+Update JD details
+
+Delete JD
+
+2. Reports Section
+A dashboard for Admin to view all applicant submissions with filtering.
+
+PostgreSQL Table: applications
+
+sql
+Copy
+Edit
+CREATE TABLE applications (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  resume_path TEXT NOT NULL,
+  jd_id TEXT REFERENCES job_descriptions(jd_id),
+  matching_score FLOAT,
+  shortlisted BOOLEAN,
+  applied_at TIMESTAMP DEFAULT NOW()
+);
+Features:
+
+Display all applications
+
+Columns: name, resume_path, jd_id, matching_score, shortlisted
+
+Add a filter dropdown to select a jd_id and show only those applications
+
+Admin can only view, not modify applications
+
+🧑‍💼 Applicant Module
+1. View Job Descriptions
+A page to list all available JDs with:
+
+JD ID
+
+Description
+
+2. Submit Application
+Applicant fills a form:
+
+Name
+
+Upload resume (PDF)
+
+Select JD ID from dropdown
+
+On submission:
+
+Save the resume to a local /resumes/ folder or cloud bucket
+
+Save form data into the applications table
+
+Run resume vs JD text matching logic to generate a matching score
+
+Use a threshold (e.g. 60%) to set shortlisted = True/False
+
+Show only a success message: "Applied Successfully" — no score shown to applicant
+
+🧠 Resume Matching Logic
+In the backend (FastAPI), when a resume is submitted:
+
+Extract text from the uploaded PDF
+
+Retrieve JD content using selected jd_id
+
+Use basic NLP/text similarity techniques (e.g., cosine similarity, Jaccard, keyword match)
+
+Compute score as percentage
+
+Store score in matching_score and compute shortlisted = score > 60
+
+🖥️ Folder Structure (Suggestion)
+bash
+Copy
+Edit
+resume-shortlisting-app/
+├── backend/
+│   ├── main.py             # FastAPI app
+│   ├── models.py           # Pydantic & SQLAlchemy models
+│   ├── crud.py             # DB operations
+│   ├── resume_parser.py    # PDF parsing & matching logic
+│   ├── database.py         # DB session setup
+├── resumes/                # Uploaded resumes
+├── frontend/
+│   ├── index.html          # JD list
+│   ├── apply.html          # Application form
+│   ├── admin/
+│   │   ├── create_jd.html
+│   │   ├── reports.html
+└── requirements.txt
+🔌 API Endpoints (Summary)
+GET /jds → List all job descriptions
+
+POST /jds → Create a JD
+
+PUT /jds/{jd_id} → Update a JD
+
+DELETE /jds/{jd_id} → Delete a JD
+
+GET /reports → Get all applications (optionally filtered by jd_id)
+
+POST /apply → Submit application (name, resume, jd_id)
+
+✅ Deliverables
+FastAPI backend with all endpoints
+
+PostgreSQL schema with job_descriptions and applications tables
+
+HTML templates for:
+
+JD list
+
+Application form
+
+Admin panel with create JD and reports (with filter)
+
+Resume upload handling and storage
+
+Backend resume matching and shortlisting logic (no frontend display of score)
