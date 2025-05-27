@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - Resume Shortlisting System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="error-page">
+                <i class="fas fa-server fa-5x text-danger mb-4"></i>
+                <h1 class="display-4 mb-3">500 - Server Error</h1>
+                <p class="lead text-muted mb-4">
+                    Something went wrong on our end. Please try again later.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i>Go Home
+                    </a>
+                    <button class="btn btn-outline-secondary" onclick="window.location.reload()">
+                        <i class="fas fa-sync-alt me-2"></i>Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
