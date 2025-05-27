@@ -1,0 +1,161 @@
+📌 Prompt:
+ Build a full-stack Resume Shortlisting Web Application in Replit using the following tech stack:
+
+🔧 Tech Stack:
+FastAPI for backend APIs
+
+
+Flask (FlaskAPI) to serve HTML templates and auth pages (like login/register)
+
+
+PostgreSQL for database (use psycopg2 or asyncpg)
+
+
+HTML + Jinja2 for frontend templates
+
+
+Session or JWT-based authentication
+
+
+Use Replit DB or Supabase/PostgreSQL if available
+
+
+
+🔐 Features to Include
+1. Authentication
+Applicant login/registration system
+
+
+Store users in a users table
+
+
+Optional: Google OAuth using FastAPI + OAuth2
+
+
+sql
+CopyEdit
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  is_admin BOOLEAN DEFAULT FALSE
+);
+
+2. Admin Functions
+Admin-only pages (use is_admin = True)
+
+
+Left sidebar with links to:
+
+
+Create JD
+
+
+View Applications (Reports)
+
+
+Profile Dropdown (Admin/User with Logout)
+
+
+3. Job Descriptions (JDs)
+sql
+CopyEdit
+CREATE TABLE job_descriptions (
+  jd_id TEXT PRIMARY KEY,
+  headline TEXT NOT NULL,
+  short_description TEXT,
+  description TEXT NOT NULL
+);
+
+Create/Edit/Delete JDs from admin panel
+
+
+4. Application Handling
+sql
+CopyEdit
+CREATE TABLE applications (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  name TEXT NOT NULL,
+  resume_path TEXT NOT NULL,
+  jd_id TEXT REFERENCES job_descriptions(jd_id),
+  matching_score FLOAT,
+  shortlisted BOOLEAN,
+  applied_at TIMESTAMP DEFAULT NOW()
+);
+
+Applicants upload resume (PDF)
+
+
+Select JD to apply for
+
+
+Automatically compute matching score (cosine similarity or basic NLP)
+
+
+Store resume, score, and mark as shortlisted = True if score > 60
+
+
+
+🏠 Homepage Behavior
+List all JDs: show JD ID, Headline, and Short Description
+
+
+Include an “Apply” button for each JD
+
+
+If not logged in → redirect to login page
+
+
+If logged in → redirect to application form
+
+
+
+📁 Project Structure in Replit
+php
+CopyEdit
+resume-shortlisting-app/
+├── main_fastapi.py         # FastAPI backend
+├── main_flask.py           # Flask for rendering HTML
+├── models.py               # Pydantic + SQLAlchemy models
+├── auth.py                 # Login, register, session
+├── resume_parser.py        # Resume text extractor & matcher
+├── database.py             # DB connection + session
+├── templates/
+│   ├── index.html
+│   ├── login.html
+│   ├── register.html
+│   ├── apply.html
+│   └── admin/
+│       ├── create_jd.html
+│       ├── reports.html
+├── static/                 # CSS/JS if needed
+├── resumes/                # Folder to store uploaded resumes
+├── requirements.txt
+
+
+📌 Deliverables
+Applicant login/registration
+
+
+Admin dashboard with sidebar and profile dropdown
+
+
+CRUD for JDs
+
+
+Resume upload with matching logic
+
+
+PostgreSQL or Replit DB schema
+
+
+Template routing (via Flask or FastAPI Jinja)
+
+
+JD listing on homepage with apply redirect logic
+
+
+
+Just say:
+ "Build this entire app in Replit with a working FastAPI + Flask hybrid server, PostgreSQL backend, and upload/resume matching logic."
