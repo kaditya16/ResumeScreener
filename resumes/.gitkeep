@@ -1,0 +1,3 @@
+# This file ensures the resumes directory is tracked in Git
+# The directory is needed for storing uploaded resume files
+# Files in this directory should be ignored in .gitignore except this .gitkeep file

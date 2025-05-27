@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Resume Shortlisting System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Create Your Account
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" id="registerForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2 text-success"></i>
+                                Email Address
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" required 
+                                   placeholder="Enter your email address">
+                            <div class="form-text">We'll never share your email with anyone else.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2 text-success"></i>
+                                Password
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password" required 
+                                       placeholder="Create a password" minlength="6">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">Password must be at least 6 characters long.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">
+                                <i class="fas fa-lock me-2 text-success"></i>
+                                Confirm Password
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required 
+                                       placeholder="Confirm your password">
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div id="passwordMatch" class="form-text"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#" class="text-success">Terms of Service</a> and 
+                                    <a href="#" class="text-success">Privacy Policy</a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Create Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <p class="mb-0">
+                        Already have an account? 
+                        <a href="{{ url_for('login') }}" class="text-success text-decoration-none">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login here
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Registration Benefits -->
+            <div class="card mt-4 border-success">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 text-success">
+                        <i class="fas fa-star me-2"></i>
+                        Why Register?
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Apply to multiple positions instantly
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Get AI-powered matching scores
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Track your application status
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Receive instant feedback
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle password visibility
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('password');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    const confirmPasswordField = document.getElementById('confirm_password');
+    
+    togglePassword.addEventListener('click', function() {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        
+        const icon = this.querySelector('i');
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    });
+    
+    toggleConfirmPassword.addEventListener('click', function() {
+        const type = confirmPasswordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        confirmPasswordField.setAttribute('type', type);
+        
+        const icon = this.querySelector('i');
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    });
+    
+    // Password matching validation
+    function checkPasswordMatch() {
+        const password = passwordField.value;
+        const confirmPassword = confirmPasswordField.value;
+        const matchDiv = document.getElementById('passwordMatch');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (confirmPassword === '') {
+            matchDiv.textContent = '';
+            matchDiv.className = 'form-text';
+            return;
+        }
+        
+        if (password === confirmPassword) {
+            matchDiv.textContent = 'Passwords match!';
+            matchDiv.className = 'form-text text-success';
+            submitBtn.disabled = false;
+        } else {
+            matchDiv.textContent = 'Passwords do not match';
+            matchDiv.className = 'form-text text-danger';
+            submitBtn.disabled = true;
+        }
+    }
+    
+    passwordField.addEventListener('input', checkPasswordMatch);
+    confirmPasswordField.addEventListener('input', checkPasswordMatch);
+    
+    // Form validation
+    const registerForm = document.getElementById('registerForm');
+    registerForm.addEventListener('submit', function(e) {
+        const email = document.getElementById('email').value;
+        const password = passwordField.value;
+        const confirmPassword = confirmPasswordField.value;
+        const terms = document.getElementById('terms').checked;
+        
+        if (!email || !password || !confirmPassword) {
+            e.preventDefault();
+            alert('Please fill in all fields');
+            return false;
+        }
+        
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Passwords do not match');
+            return false;
+        }
+        
+        if (password.length < 6) {
+            e.preventDefault();
+            alert('Password must be at least 6 characters long');
+            return false;
+        }
+        
+        if (!terms) {
+            e.preventDefault();
+            alert('Please accept the terms and conditions');
+            return false;
+        }
+        
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            e.preventDefault();
+            alert('Please enter a valid email address');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

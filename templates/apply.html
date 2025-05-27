@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Apply for {{ job_description.headline }} - Resume Shortlisting System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Job Description -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-briefcase me-2"></i>
+                        Job Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-primary">Job ID:</h6>
+                        <p class="mb-2">{{ job_description.jd_id }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary">Position:</h6>
+                        <h5 class="text-dark">{{ job_description.headline }}</h5>
+                    </div>
+                    
+                    {% if job_description.short_description %}
+                    <div class="mb-3">
+                        <h6 class="text-primary">Summary:</h6>
+                        <p class="text-muted">{{ job_description.short_description }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary">Description:</h6>
+                        <div class="description-content">
+                            {{ job_description.description|replace('\n', '<br>')|safe }}
+                        </div>
+                    </div>
+                    
+                    <div class="text-muted">
+                        <small>
+                            <i class="fas fa-calendar me-1"></i>
+                            Posted on {{ job_description.created_at.strftime('%B %d, %Y') if job_description.created_at else 'Recently' }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Application Form -->
+        <div class="col-lg-6">
+            {% if existing_application %}
+            <!-- Already Applied -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Application Status
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-file-alt fa-4x text-info mb-3"></i>
+                        <h4 class="text-info">Already Applied!</h4>
+                        <p class="text-muted">You have already submitted an application for this position.</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="stat-card">
+                                <h6 class="text-muted">Application Date</h6>
+                                <p class="fw-bold">{{ existing_application.applied_at.strftime('%b %d, %Y') }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="stat-card">
+                                <h6 class="text-muted">Matching Score</h6>
+                                {% if existing_application.matching_score %}
+                                <p class="fw-bold text-{{ 'success' if existing_application.matching_score >= 60 else 'warning' }}">
+                                    {{ existing_application.matching_score|round(1) }}%
+                                </p>
+                                {% else %}
+                                <p class="fw-bold text-muted">Processing...</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if existing_application.shortlisted %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-star me-2"></i>
+                        <strong>Congratulations!</strong> You have been shortlisted for this position.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-clock me-2"></i>
+                        Your application is under review.
+                    </div>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Browse Other Jobs
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <!-- Application Form -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-file-upload me-2"></i>
+                        Submit Application
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('submit_application') }}" enctype="multipart/form-data" id="applicationForm">
+                        <input type="hidden" name="jd_id" value="{{ job_description.jd_id }}">
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user me-2 text-success"></i>
+                                Full Name *
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   placeholder="Enter your full name" value="{{ current_user.email.split('@')[0].title() }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="resume" class="form-label">
+                                <i class="fas fa-file-pdf me-2 text-success"></i>
+                                Resume (PDF) *
+                            </label>
+                            <input type="file" class="form-control" id="resume" name="resume" accept=".pdf" required>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Upload your resume in PDF format. Maximum file size: 16MB
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="alert alert-info">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-robot me-2"></i>
+                                    AI-Powered Matching
+                                </h6>
+                                <p class="mb-0">
+                                    Our system will analyze your resume and calculate a compatibility score with this job description. 
+                                    You'll receive instant feedback upon submission!
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                Submit Application
+                            </button>
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Back to Jobs
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Application Tips -->
+            <div class="card mt-4 border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Application Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-warning me-2"></i>
+                            Ensure your resume is up-to-date and relevant
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-warning me-2"></i>
+                            Include keywords from the job description
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-warning me-2"></i>
+                            Highlight your relevant skills and experience
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-warning me-2"></i>
+                            Use a clear, professional format
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const applicationForm = document.getElementById('applicationForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const resumeInput = document.getElementById('resume');
+    
+    if (applicationForm) {
+        // File validation
+        resumeInput.addEventListener('change', function() {
+            const file = this.files[0];
+            
+            if (file) {
+                // Check file type
+                if (file.type !== 'application/pdf') {
+                    alert('Please select a PDF file.');
+                    this.value = '';
+                    return;
+                }
+                
+                // Check file size (16MB = 16 * 1024 * 1024 bytes)
+                if (file.size > 16 * 1024 * 1024) {
+                    alert('File size must be less than 16MB.');
+                    this.value = '';
+                    return;
+                }
+                
+                // Show file info
+                const fileName = file.name;
+                const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                console.log(`Selected file: ${fileName} (${fileSize} MB)`);
+            }
+        });
+        
+        // Form submission
+        applicationForm.addEventListener('submit', function(e) {
+            const name = document.getElementById('name').value.trim();
+            const resume = resumeInput.files[0];
+            
+            if (!name) {
+                e.preventDefault();
+                alert('Please enter your full name.');
+                return false;
+            }
+            
+            if (!resume) {
+                e.preventDefault();
+                alert('Please select a resume file.');
+                return false;
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing Application...';
+            
+            // Allow form to submit
+            return true;
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if jd else 'Create' }} Job Description - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-{{ 'edit' if jd else 'plus' }} me-2 text-primary"></i>
+                        {{ 'Edit' if jd else 'Create' }} Job Description
+                    </h2>
+                    <p class="text-muted mb-0">
+                        {{ 'Update the details for this position' if jd else 'Add a new job opening to your portal' }}
+                    </p>
+                </div>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Form Section -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-clipboard-list me-2"></i>
+                        Job Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="jdForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="jd_id" class="form-label">
+                                        <i class="fas fa-tag me-2 text-primary"></i>
+                                        Job ID *
+                                    </label>
+                                    <input type="text" class="form-control" id="jd_id" name="jd_id" required 
+                                           placeholder="e.g., SWE-001, MKT-2024-01" 
+                                           value="{{ jd.jd_id if jd else '' }}"
+                                           {{ 'readonly' if jd else '' }}>
+                                    <div class="form-text">Unique identifier for this job opening</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="headline" class="form-label">
+                                        <i class="fas fa-heading me-2 text-primary"></i>
+                                        Job Title *
+                                    </label>
+                                    <input type="text" class="form-control" id="headline" name="headline" required 
+                                           placeholder="e.g., Senior Software Engineer" 
+                                           value="{{ jd.headline if jd else '' }}">
+                                    <div class="form-text">The main title for this position</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="short_description" class="form-label">
+                                <i class="fas fa-align-left me-2 text-primary"></i>
+                                Short Description
+                            </label>
+                            <input type="text" class="form-control" id="short_description" name="short_description" 
+                                   placeholder="Brief summary of the role (optional)" 
+                                   value="{{ jd.short_description if jd else '' }}"
+                                   maxlength="200">
+                            <div class="form-text">A brief one-line summary (shown on job listings)</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-file-alt me-2 text-primary"></i>
+                                Full Job Description *
+                            </label>
+                            <textarea class="form-control" id="description" name="description" rows="12" required 
+                                      placeholder="Enter the complete job description including responsibilities, requirements, benefits, etc.">{{ jd.description if jd else '' }}</textarea>
+                            <div class="form-text">
+                                Include responsibilities, qualifications, skills required, benefits, etc. 
+                                This will be used for resume matching.
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-{{ 'save' if jd else 'plus' }} me-2"></i>
+                                {{ 'Update Job Description' if jd else 'Create Job Description' }}
+                            </button>
+                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preview Section -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-eye me-2"></i>
+                        Live Preview
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="preview">
+                        <div class="preview-section">
+                            <h6 class="text-primary">Job ID:</h6>
+                            <p class="preview-jd-id text-muted">Enter job ID...</p>
+                        </div>
+                        
+                        <div class="preview-section">
+                            <h6 class="text-primary">Position:</h6>
+                            <h5 class="preview-headline text-muted">Enter job title...</h5>
+                        </div>
+                        
+                        <div class="preview-section">
+                            <h6 class="text-primary">Summary:</h6>
+                            <p class="preview-short-description text-muted">No summary provided</p>
+                        </div>
+                        
+                        <div class="preview-section">
+                            <h6 class="text-primary">Description:</h6>
+                            <div class="preview-description text-muted">Enter job description...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tips Card -->
+            <div class="card mt-3 border-success">
+                <div class="card-header bg-success text-white">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Writing Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Use clear, specific job titles
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Include required skills and technologies
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            List specific responsibilities
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Mention education/experience requirements
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Add benefits and company culture info
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Live preview functionality
+    const jdIdInput = document.getElementById('jd_id');
+    const headlineInput = document.getElementById('headline');
+    const shortDescInput = document.getElementById('short_description');
+    const descriptionInput = document.getElementById('description');
+    
+    const previewJdId = document.querySelector('.preview-jd-id');
+    const previewHeadline = document.querySelector('.preview-headline');
+    const previewShortDesc = document.querySelector('.preview-short-description');
+    const previewDescription = document.querySelector('.preview-description');
+    
+    function updatePreview() {
+        previewJdId.textContent = jdIdInput.value || 'Enter job ID...';
+        previewJdId.className = jdIdInput.value ? 'fw-bold' : 'text-muted';
+        
+        previewHeadline.textContent = headlineInput.value || 'Enter job title...';
+        previewHeadline.className = headlineInput.value ? 'text-dark' : 'text-muted';
+        
+        previewShortDesc.textContent = shortDescInput.value || 'No summary provided';
+        previewShortDesc.className = shortDescInput.value ? 'text-dark' : 'text-muted';
+        
+        const descText = descriptionInput.value || 'Enter job description...';
+        previewDescription.innerHTML = descText.replace(/\n/g, '<br>');
+        previewDescription.className = descriptionInput.value ? 'text-dark' : 'text-muted';
+    }
+    
+    // Update preview on input
+    jdIdInput.addEventListener('input', updatePreview);
+    headlineInput.addEventListener('input', updatePreview);
+    shortDescInput.addEventListener('input', updatePreview);
+    descriptionInput.addEventListener('input', updatePreview);
+    
+    // Initial preview update
+    updatePreview();
+    
+    // Form validation
+    const form = document.getElementById('jdForm');
+    form.addEventListener('submit', function(e) {
+        const jdId = jdIdInput.value.trim();
+        const headline = headlineInput.value.trim();
+        const description = descriptionInput.value.trim();
+        
+        if (!jdId || !headline || !description) {
+            e.preventDefault();
+            alert('Please fill in all required fields (Job ID, Job Title, and Description).');
+            return false;
+        }
+        
+        // JD ID format validation
+        const jdIdPattern = /^[A-Z0-9\-_]+$/i;
+        if (!jdIdPattern.test(jdId)) {
+            e.preventDefault();
+            alert('Job ID should contain only letters, numbers, hyphens, and underscores.');
+            return false;
+        }
+        
+        if (description.length < 50) {
+            e.preventDefault();
+            alert('Job description should be at least 50 characters long.');
+            return false;
+        }
+    });
+    
+    // Character counter for description
+    const charCounter = document.createElement('div');
+    charCounter.className = 'form-text';
+    descriptionInput.parentNode.appendChild(charCounter);
+    
+    function updateCharCounter() {
+        const length = descriptionInput.value.length;
+        charCounter.textContent = `${length} characters`;
+        charCounter.className = length < 50 ? 'form-text text-warning' : 'form-text text-success';
+    }
+    
+    descriptionInput.addEventListener('input', updateCharCounter);
+    updateCharCounter();
+});
+</script>
+{% endblock %}

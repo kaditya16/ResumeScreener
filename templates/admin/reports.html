@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Resume Shortlisting System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-tachometer-alt me-2 text-primary"></i>
+                        Admin Dashboard
+                    </h2>
+                    <p class="text-muted mb-0">Manage job descriptions and review applications</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('create_jd') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create New JD
+                    </a>
+                    <button class="btn btn-outline-secondary" onclick="window.location.reload()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    {% if stats %}
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title">{{ stats.total_applications }}</h3>
+                            <p class="card-text">Total Applications</p>
+                        </div>
+                        <i class="fas fa-file-alt fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title">{{ stats.shortlisted_applications }}</h3>
+                            <p class="card-text">Shortlisted</p>
+                        </div>
+                        <i class="fas fa-star fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title">{{ stats.total_jds }}</h3>
+                            <p class="card-text">Active Jobs</p>
+                        </div>
+                        <i class="fas fa-briefcase fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title">{{ stats.shortlist_rate }}%</h3>
+                            <p class="card-text">Shortlist Rate</p>
+                        </div>
+                        <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Job Descriptions Management -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-briefcase me-2"></i>
+                        Job Descriptions Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Job ID</th>
+                                    <th>Title</th>
+                                    <th>Applications</th>
+                                    <th>Created</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jobsTableBody">
+                                <!-- Jobs will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Management -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-list me-2"></i>
+                            Applications Management
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <select class="form-select form-select-sm" id="jdFilter" style="max-width: 200px;">
+                                <option value="">All Jobs</option>
+                            </select>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="shortlistedFilter">
+                                <label class="form-check-label text-white" for="shortlistedFilter">
+                                    Shortlisted Only
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Applicant</th>
+                                    <th>Job</th>
+                                    <th>Score</th>
+                                    <th>Status</th>
+                                    <th>Applied</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applicationsTableBody">
+                                <!-- Applications will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this job description? This action cannot be undone.</p>
+                <p class="text-danger"><strong>All associated applications will remain but the job will be deactivated.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let deleteJdId = null;
+    
+    // Load initial data
+    loadJobDescriptions();
+    loadApplications();
+    
+    // Event listeners
+    document.getElementById('jdFilter').addEventListener('change', loadApplications);
+    document.getElementById('shortlistedFilter').addEventListener('change', loadApplications);
+    
+    // Delete confirmation
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        if (deleteJdId) {
+            deleteJobDescription(deleteJdId);
+        }
+    });
+    
+    async function loadJobDescriptions() {
+        try {
+            const response = await fetch('http://localhost:8000/api/job-descriptions');
+            const jobs = await response.json();
+            
+            const tbody = document.getElementById('jobsTableBody');
+            const jdFilter = document.getElementById('jdFilter');
+            
+            // Clear existing options (except "All Jobs")
+            jdFilter.innerHTML = '<option value="">All Jobs</option>';
+            
+            if (jobs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                            No job descriptions found. <a href="{{ url_for('create_jd') }}">Create your first job</a>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = jobs.map(job => `
+                <tr>
+                    <td><span class="badge bg-primary">${job.jd_id}</span></td>
+                    <td>
+                        <div class="fw-bold">${job.headline}</div>
+                        ${job.short_description ? `<small class="text-muted">${job.short_description}</small>` : ''}
+                    </td>
+                    <td>
+                        <span class="badge bg-info">${job.application_count}</span>
+                    </td>
+                    <td>
+                        <small class="text-muted">
+                            ${new Date(job.created_at).toLocaleDateString()}
+                        </small>
+                    </td>
+                    <td>
+                        <span class="badge bg-${job.is_active ? 'success' : 'secondary'}">
+                            ${job.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('edit_jd', jd_id='') }}${job.jd_id}" class="btn btn-outline-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn btn-outline-danger" onclick="confirmDelete('${job.jd_id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Populate filter dropdown
+            jobs.forEach(job => {
+                const option = document.createElement('option');
+                option.value = job.jd_id;
+                option.textContent = `${job.jd_id} - ${job.headline}`;
+                jdFilter.appendChild(option);
+            });
+            
+        } catch (error) {
+            console.error('Error loading job descriptions:', error);
+            document.getElementById('jobsTableBody').innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-danger py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2 d-block"></i>
+                        Error loading job descriptions
+                    </td>
+                </tr>
+            `;
+        }
+    }
+    
+    async function loadApplications() {
+        try {
+            const jdId = document.getElementById('jdFilter').value;
+            const shortlistedOnly = document.getElementById('shortlistedFilter').checked;
+            
+            const params = new URLSearchParams();
+            if (jdId) params.append('jd_id', jdId);
+            if (shortlistedOnly) params.append('shortlisted_only', 'true');
+            
+            const response = await fetch(`http://localhost:8000/api/applications?${params}`);
+            const applications = await response.json();
+            
+            const tbody = document.getElementById('applicationsTableBody');
+            
+            if (applications.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                            No applications found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = applications.map(app => `
+                <tr>
+                    <td>
+                        <div class="fw-bold">${app.name}</div>
+                        <small class="text-muted">${app.user_email}</small>
+                    </td>
+                    <td>
+                        <span class="badge bg-primary">${app.jd_id}</span>
+                        <div><small class="text-muted">${app.job_headline}</small></div>
+                    </td>
+                    <td>
+                        ${app.matching_score ? `
+                            <span class="badge bg-${app.matching_score >= 60 ? 'success' : 'warning'}">
+                                ${app.matching_score.toFixed(1)}%
+                            </span>
+                        ` : '<span class="text-muted">-</span>'}
+                    </td>
+                    <td>
+                        <span class="badge bg-${app.shortlisted ? 'success' : 'secondary'}">
+                            ${app.shortlisted ? 'Shortlisted' : 'Under Review'}
+                        </span>
+                    </td>
+                    <td>
+                        <small class="text-muted">
+                            ${new Date(app.applied_at).toLocaleDateString()}
+                        </small>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-${app.shortlisted ? 'warning' : 'success'}" 
+                                    onclick="toggleShortlist(${app.id}, ${app.shortlisted})">
+                                <i class="fas fa-${app.shortlisted ? 'star-half-alt' : 'star'}"></i>
+                            </button>
+                            <a href="${app.resume_path}" target="_blank" class="btn btn-outline-info">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+        } catch (error) {
+            console.error('Error loading applications:', error);
+            document.getElementById('applicationsTableBody').innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-danger py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2 d-block"></i>
+                        Error loading applications
+                    </td>
+                </tr>
+            `;
+        }
+    }
+    
+    window.confirmDelete = function(jdId) {
+        deleteJdId = jdId;
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
+    
+    async function deleteJobDescription(jdId) {
+        try {
+            const response = await fetch(`http://localhost:8000/api/job-descriptions/${jdId}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                modal.hide();
+                
+                // Show success message
+                showAlert('Job description deleted successfully!', 'success');
+                
+                // Reload data
+                loadJobDescriptions();
+                loadApplications();
+            } else {
+                showAlert('Error deleting job description', 'danger');
+            }
+        } catch (error) {
+            console.error('Error deleting job description:', error);
+            showAlert('Error deleting job description', 'danger');
+        }
+    }
+    
+    window.toggleShortlist = async function(applicationId, currentStatus) {
+        try {
+            const response = await fetch(`http://localhost:8000/api/applications/${applicationId}/shortlist`, {
+                method: 'PUT'
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                showAlert(result.message, 'success');
+                loadApplications(); // Reload applications
+            } else {
+                showAlert('Error updating shortlist status', 'danger');
+            }
+        } catch (error) {
+            console.error('Error toggling shortlist:', error);
+            showAlert('Error updating shortlist status', 'danger');
+        }
+    }
+    
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        const container = document.querySelector('.container-fluid');
+        container.insertBefore(alertDiv, container.firstChild);
+        
+        // Auto dismiss after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+});
+</script>
+{% endblock %}

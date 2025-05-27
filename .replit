@@ -1,0 +1,29 @@
+modules = ["python-3.11"]
+
+[nix]
+channel = "stable-24_05"
+packages = ["glibcLocales", "libxcrypt"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Resume App Server"
+
+[[workflows.workflow]]
+name = "Resume App Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pip install fastapi uvicorn flask flask-sqlalchemy psycopg2-binary werkzeug pydantic email-validator python-multipart pypdf2 scikit-learn nltk && python main.py"
+waitForPort = 5000
+
+[deployment]
+run = ["sh", "-c", "pip install fastapi uvicorn flask flask-sqlalchemy psycopg2-binary werkzeug pydantic email-validator python-multipart pypdf2 scikit-learn nltk && python main.py"]
