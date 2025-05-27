@@ -57,26 +57,45 @@
             </div>
             
             <!-- Demo Accounts Info -->
-            <div class="card mt-4 border-info">
-                <div class="card-header bg-info text-white">
+            <div class="card mt-4 border-success">
+                <div class="card-header bg-success text-white">
                     <h6 class="mb-0">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Demo Accounts
+                        <i class="fas fa-key me-2"></i>
+                        Ready-to-Use Demo Accounts
                     </h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h6 class="text-primary">Admin Account:</h6>
-                            <small class="text-muted">
-                                Create an admin account to manage job descriptions and view applications.
-                            </small>
+                            <div class="p-3 bg-light rounded mb-3">
+                                <h6 class="text-success mb-2">
+                                    <i class="fas fa-crown me-2"></i>Admin Login
+                                </h6>
+                                <div class="mb-2">
+                                    <strong>Email:</strong> admin@example.com
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Password:</strong> admin123
+                                </div>
+                                <small class="text-muted">
+                                    Access admin dashboard, create jobs, view applications
+                                </small>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <h6 class="text-primary">User Account:</h6>
-                            <small class="text-muted">
-                                Register as a regular user to apply for available positions.
-                            </small>
+                            <div class="p-3 bg-light rounded mb-3">
+                                <h6 class="text-primary mb-2">
+                                    <i class="fas fa-user me-2"></i>Or Register New
+                                </h6>
+                                <small class="text-muted">
+                                    Create a new account to apply for jobs and upload resumes
+                                </small>
+                                <div class="mt-2">
+                                    <a href="{{ url_for('register') }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-user-plus me-1"></i>Register
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

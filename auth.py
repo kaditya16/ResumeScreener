@@ -50,7 +50,9 @@ def create_user(email, password, is_admin=False):
         return None, "Email already registered"
     
     # Create new user
-    user = User(email=email, is_admin=is_admin)
+    user = User()
+    user.email = email
+    user.is_admin = is_admin
     user.set_password(password)
     
     try:

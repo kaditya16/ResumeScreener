@@ -51,7 +51,7 @@ def register_web_routes(app):
                 flash('Registration successful! Welcome!', 'success')
                 return redirect(url_for('index'))
             else:
-                flash(error, 'error')
+                flash(error or 'Registration failed', 'error')
         
         return render_template('register.html')
     
