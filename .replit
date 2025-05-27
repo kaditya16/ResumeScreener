@@ -22,8 +22,16 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pip install fastapi uvicorn flask flask-sqlalchemy psycopg2-binary werkzeug pydantic email-validator python-multipart pypdf2 scikit-learn nltk && python main.py"
+args = "python main.py"
 waitForPort = 5000
 
 [deployment]
-run = ["sh", "-c", "pip install fastapi uvicorn flask flask-sqlalchemy psycopg2-binary werkzeug pydantic email-validator python-multipart pypdf2 scikit-learn nltk && python main.py"]
+run = ["sh", "-c", "python main.py"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
