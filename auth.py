@@ -38,6 +38,7 @@ def login_user(user):
     session['user_id'] = user.id
     session['user_email'] = user.email
     session['is_admin'] = user.is_admin
+    session.permanent = True
 
 def logout_user():
     """Log out current user by clearing session"""

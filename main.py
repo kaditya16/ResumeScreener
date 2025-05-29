@@ -9,7 +9,12 @@ from models import db
 # Create Flask app
 flask_app = Flask(__name__)
 flask_app.secret_key = os.environ.get("FLASK_SECRET_KEY", "resume-shortlist-secret-key-2024")
-flask_app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "postgresql://localhost/resume_db")
+flask_app.config["SESSION_TYPE"] = "filesystem"
+flask_app.config["PERMANENT_SESSION_LIFETIME"] = 3600  # 1 hour
+flask_app.config["SESSION_COOKIE_SECURE"] = True
+flask_app.config["SESSION_COOKIE_HTTPONLY"] = True
+flask_app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+flask_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///resume.db"
 flask_app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,

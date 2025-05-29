@@ -19,27 +19,35 @@ def register_web_routes(app):
     def login():
         """User login page"""
         if request.method == 'POST':
-            email = request.form['email']
-            password = request.form['password']
-            
-            # Quick authentication for demo accounts
-            if email == 'admin@example.com' and password == 'admin123':
-                user = User.query.filter_by(email=email).first()
+            try:
+                email = request.form.get('email', '').strip()
+                password = request.form.get('password', '').strip()
+                
+                if not email or not password:
+                    flash('Please enter both email and password.', 'error')
+                    return render_template('login.html')
+                
+                # Quick authentication for demo accounts
+                if email == 'admin@example.com' and password == 'admin123':
+                    user = User.query.filter_by(email=email).first()
+                    if user:
+                        login_user(user)
+                        flash('Login successful!', 'success')
+                        next_page = request.args.get('next')
+                        return redirect(next_page) if next_page else redirect(url_for('admin_dashboard'))
+                
+                # Regular authentication
+                user = authenticate_user(email, password)
                 if user:
                     login_user(user)
                     flash('Login successful!', 'success')
                     next_page = request.args.get('next')
-                    return redirect(next_page) if next_page else redirect(url_for('admin_dashboard'))
-            
-            # Regular authentication
-            user = authenticate_user(email, password)
-            if user:
-                login_user(user)
-                flash('Login successful!', 'success')
-                next_page = request.args.get('next')
-                return redirect(next_page) if next_page else redirect(url_for('index'))
-            else:
-                flash('Invalid email or password.', 'error')
+                    return redirect(next_page) if next_page else redirect(url_for('index'))
+                else:
+                    flash('Invalid email or password.', 'error')
+            except Exception as e:
+                flash(f'An error occurred during login: {str(e)}', 'error')
+                return render_template('login.html')
         
         return render_template('login.html')
     
