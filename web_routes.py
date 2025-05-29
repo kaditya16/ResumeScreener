@@ -1,4 +1,4 @@
-gifrom flask import render_template, request, redirect, url_for, flash, session, jsonify, current_app
+from flask import render_template, request, redirect, url_for, flash, session, jsonify, current_app
 from werkzeug.utils import secure_filename
 import os
 import uuid
